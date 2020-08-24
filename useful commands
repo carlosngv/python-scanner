@@ -1,0 +1,2 @@
+
+pyuic5 templates/example.ui -o example.py
