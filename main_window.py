@@ -12,7 +12,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QDialog, QWidget, QLabel, QPushButton, QVBoxLayout
 import re
 import sys
-from JS.scanner import Scanner
+from JS.scanner import Scanner as js_scanner
+from CSS.scanner import Scanner as css_scanner
 
 class Ui_MainWindow(QWidget):
     def setupUi(self, MainWindow):
@@ -322,17 +323,16 @@ class Ui_MainWindow(QWidget):
         dlg.setFilter(QDir.Files)
         if dlg.exec_():
             file_name = dlg.selectedFiles()
-            if file_name[0].endswith('.html') | file_name[0].endswith('.js') | file_name[0].endswith('.css'):
+            if file_name[0].endswith('.js'):
                 with open(file_name[0], 'r') as f:
                     # input for the scanner
                     str = f.read()
-                    print('Characters:',len(str))
 
                     self.plainTextEdit_2.clear()
                     self.plainTextEdit.clear()
-
+                    self.plainTextEdit.appendPlainText('>> JavaScript File')
                     # New scanner to analyze input
-                    new_scanner = Scanner()
+                    new_scanner = js_scanner()
                     new_scanner.scan(str)
                     x = str.splitlines()
                     for line in x:
@@ -340,6 +340,26 @@ class Ui_MainWindow(QWidget):
                         for word in y:
                             word = word.lstrip('\t')
 
+                    for error in new_scanner.error_list:
+                        self.plainTextEdit.appendPlainText('>> '+ error.get_message())
+                    if len(new_scanner.error_list):
+                        self.error_html(new_scanner.error_list)
+                    self.generate_html(new_scanner.token_list)
+                    self.plainTextEdit_2.insertPlainText(str)
+                    f.close()
+            elif file_name[0].endswith('.css'):
+                with open(file_name[0], 'r') as f:
+                    str = f.read()
+                    self.plainTextEdit_2.clear()
+                    self.plainTextEdit.clear()
+                    self.plainTextEdit.appendPlainText('>> CSS File')
+                    new_scanner = css_scanner()
+                    new_scanner.scan(str)
+                    x = str.splitlines()
+                    for line in x:
+                        y = line.rsplit(' ')
+                        for word in y:
+                            word = word.lstrip('\t')
                     for error in new_scanner.error_list:
                         self.plainTextEdit.appendPlainText('>> '+ error.get_message())
                     if len(new_scanner.error_list):

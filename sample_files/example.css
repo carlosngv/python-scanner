@@ -1,0 +1,32 @@
+.container {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+container#example { sdfsd @
+    color: red;
+}
+/* esto es un comentario
+multilinea @ */
+hola-mundo {
+content: "hola mundo";
+content: "adios";
+font-size: 54%
+}
+a:hover {
+    font-size: 43%;
+    color: blue;
+    background: #aaff03;
+    size: -32px;
+    hola: 32.43
+}
+
+*::before, ax:after {
+    csdcs: "dasd asdasd";
+}
+
+
+#property {
+shadow-box: 1 2 3 0;
+}

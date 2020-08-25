@@ -1,6 +1,5 @@
 from JS.token import Token
 import re
-
 class Error:
     def __init__(self, value, message):
         self.__value = value
@@ -44,7 +43,7 @@ class Scanner:
         input = data.splitlines()
         for line in input:
             words = line.split()
-            print(words)
+            #print(words)
             if comment_oneline_found == True:
                 comment_oneline_found = False
                 self.set_token('COMMENT', self.aux, row, column)
@@ -63,12 +62,15 @@ class Scanner:
                         y = re.sub('[;]','',x)
                         self.aux += y + ' '
                         self.set_token('STRING', self.aux, row, column)
-                        self.set_token('RIGHT_PARENT', ')', row, column + 1)
-                        self.set_token('SEMICOLON', ';', row, column + 1)
+                        column = column + 1
+                        self.set_token('RIGHT_PARENT', ')', row, column )
+                        column = column + 1
+                        self.set_token('SEMICOLON', ';', row, column )
                     else:
                         self.aux += x + ' '
                         self.set_token('STRING', self.aux, row, column)
-                        self.set_token('RIGHT_PARENT', ')', row, column + 1)
+                        column = column + 1
+                        self.set_token('RIGHT_PARENT', ')', row, column)
                     clgstring_found = False
                     continue
 
@@ -80,8 +82,10 @@ class Scanner:
                             self.set_token('NUMBER', y, row, column)
                         else:
                             self.set_token('ID', y, row, column)
-                        self.set_token('RIGHT_PARENT',')',row,column+1)
-                        self.set_token('SEMICOLON ',';',row,column+1)
+                        column = column + 1
+                        self.set_token('RIGHT_PARENT',')',row,column)
+                        column = column + 1
+                        self.set_token('SEMICOLON ',';',row,column)
                         parameters_found = False
                     else:
                         y = re.sub('\)', '', word)
@@ -89,7 +93,8 @@ class Scanner:
                             self.set_token('NUMBER', y, row, column)
                         else:
                             self.set_token('ID', y, row, column)
-                        self.set_token('RIGHT_PARENT',')',row,column+1)
+                        column = column + 1
+                        self.set_token('RIGHT_PARENT',')',row,column)
                         parameters_found =False
 
                 elif word.endswith(';') and (len(re.findall('\(',word)) == 0):
@@ -120,9 +125,11 @@ class Scanner:
                 elif re.findall('for', word):
                     self.set_token('RESERVED_FOR', 'for', row, column)
                     if re.findall('\(', word):
-                        self.set_token('LEFT_PARENT', '(', row, column + 1)
+                        column = column + 1
+                        self.set_token('LEFT_PARENT', '(', row, column)
                         x = re.sub('for\(', '', word)
-                        self.set_token('ID', x, row, column + 1)
+                        column = column + 1
+                        self.set_token('ID', x, row, column)
                     continue
 
 
@@ -130,15 +137,19 @@ class Scanner:
                 elif re.findall('while', word):
                     self.set_token('RESERVED_WHILE', 'while', row, column)
                     if re.findall('\(', word):
-                        self.set_token('LEFT_PARENT', '(', row, column + 1)
+                        column = column + 1
+                        self.set_token('LEFT_PARENT', '(', row, column)
                         x = re.sub('while\(', '', word)
-                        self.set_token('ID', x, row, column + 1)
+                        column = column + 1
+                        self.set_token('ID', x, row, column )
                         if re.findall('\)', word):
                             y = re.sub('\)', '', x)
                             if re.match('[0-9]*', y):
-                                self.set_token('NUMBER', y, row, column + 1)
+                                column = column + 1
+                                self.set_token('NUMBER', y, row, column)
                             else:
-                                self.set_token('ID', y, row, column + 1)
+                                column = column + 1
+                                self.set_token('ID', y, row, column)
                         else:
                             ifparameters_found = True
                     continue
@@ -152,90 +163,122 @@ class Scanner:
                         arg = re.sub(';','',argsp2)
                         if len(arg) == 0:
                             self.set_token('ID', argsp[0], row, column)
-                            self.set_token('LEFT_PARENT','(',row, column + 1)
-                            self.set_token('RIGHT_PARENT',')',row, column + 1)
-                            self.set_token('SEMICOLON',';',row, column + 1)
+                            column = column + 1
+                            self.set_token('LEFT_PARENT','(',row, column )
+                            column = column + 1
+                            self.set_token('RIGHT_PARENT',')',row, column)
+                            column = column + 1
+                            self.set_token('SEMICOLON',';',row, column)
                         else:
                             self.set_token('ID', argsp[0], row, column)
-                            self.set_token('LEFT_PARENT', '(', row, column + 1)
-                            self.set_token('ID', arg, row, column + 1)
-                            self.set_token('RIGHT_PARENT', ')', row, column + 1)
-                            self.set_token('SEMICOLON', ';', row, column + 1)
+                            column = column + 1
+                            self.set_token('LEFT_PARENT', '(', row, column)
+                            column = column + 1
+                            self.set_token('ID', arg, row, column)
+                            column = column + 1
+                            self.set_token('RIGHT_PARENT', ')', row, column )
+                            column = column + 1
+                            self.set_token('SEMICOLON', ';', row, column)
                     else:
                         self.set_token('ID', argsp[0], row, column)
-                        self.set_token('LEFT_PARENT', '(', row, column + 1)
-                        self.set_token('RIGHT_PARENT', ')', row, column + 1)
+                        column = column + 1
+                        self.set_token('LEFT_PARENT', '(', row, column)
+                        column = column + 1
+                        self.set_token('RIGHT_PARENT', ')', row, column)
                     continue
                 elif re.findall('if', word):
                     self.set_token('RESERVED_IF', 'if', row, column)
                     if re.findall('\(', word):
-                        self.set_token('LEFT_PARENT', '(', row, column + 1)
+                        column = column + 1
+                        self.set_token('LEFT_PARENT', '(', row, column)
                         x = re.sub('if\(','', word)
-                        self.set_token('ID', x, row, column + 1)
+                        column = column + 1
+                        self.set_token('ID', x, row, column)
                         if re.findall('\)', word):
                             y = re.sub('\)', '', x)
                             if re.match('[0-9]+', y):
-                                self.set_token('NUMBER', y, row, column + 1)
+                                column = column + 1
+                                self.set_token('NUMBER', y, row, column)
                             else:
-                                self.set_token('ID', y, row, column + 1)
+                                column = column + 1
+                                self.set_token('ID', y, row, column)
                         else:
                             ifparameters_found = True
                 elif re.findall ('\)[{]', word) and ifparameters_found == True:
                     x = re.sub('\)[{]', ' ', word)
                     if x:
                         if re.match('[0-9]+', x):
-                            self.set_token('NUMBER', x, row, column + 1)
+                            column = column + 1
+                            self.set_token('NUMBER', x, row, column)
                             ifparameters_found = False
+
                             self.set_token('RIGHT_PARENT', ')', row, column)
-                            self.set_token('LEFT_BRACE', '{', row, column + 1)
+                            column = column + 1
+                            self.set_token('LEFT_BRACE', '{', row, column )
                         else:
-                            self.set_token('ID', x, row, column + 1)
+                            column = column + 1
+                            self.set_token('ID', x, row, column)
                             ifparameters_found= False
                             self.set_token('RIGHT_PARENT', ')', row, column)
-                            self.set_token('LEFT_BRACE', '{', row, column + 1)
+                            column = column + 1
+                            self.set_token('LEFT_BRACE', '{', row, column)
                     continue
                 elif word.endswith(')') and ifparameters_found == True:
                     x = re.sub('\)','',word)
                     if re.match('[0-9]+', x):
-                        self.set_token('NUMBER', x, row, column + 1)
-                        self.set_token('RIGHT_PARENT', ')', row, column + 1)
+                        column = column + 1
+                        self.set_token('NUMBER', x, row, column)
+                        column = column + 1
+                        self.set_token('RIGHT_PARENT', ')', row, column)
 
                         ifparameters_found = False
                     else:
-                        self.set_token('ID', x, row, column + 1)
-                        self.set_token('RIGHT_PARENT', ')', row, column + 1)
+                        column = column + 1
+                        self.set_token('ID', x, row, column )
+                        column = column + 1
+                        self.set_token('RIGHT_PARENT', ')', row, column)
 
                         ifparameters_found = False
                     continue
                 elif re.findall("constructor",word):
                     self.set_token("RESERVED_CONSTRUCTOR", 'constructor', row, column)
                     if re.findall('\(',word):
-                        self.set_token("LEFT_PARENT", '(', row, column+1)
+                        column = column + 1
+                        self.set_token("LEFT_PARENT", '(', row, column)
                         x = re.sub('^constructor\(','',word)
                         if re.findall(',', word):
                             y = re.sub(',','',x) # FIRST PARAMETER
-                            self.set_token('ID', y, row, column + 1)
-                            self.set_token('COMA', ',', row, column + 1)
+                            column = column + 1
+                            self.set_token('ID', y, row, column )
+                            column = column + 1
+                            self.set_token('COMA', ',', row, column)
                             parameters_found = True
                         else:
-                            self.set_token('ID', x, row, column + 1)
+                            column = column + 1
+                            self.set_token('ID', x, row, column)
                         continue
 
                 elif re.findall("Math.pow", word) and parameters_found == False:
                     self.set_token("RESERVED_MATH", 'Math', row, column)
-                    self.set_token("RESERVED_POW", 'pow', row, column+1)
-                    self.set_token("DOT", '.', row, column+1)
+                    column = column + 1
+                    self.set_token("RESERVED_POW", 'pow', row, column)
+                    column = column + 1
+                    self.set_token("DOT", '.', row, column)
                     if re.findall("\(", word):
-                        self.set_token('LEFT_PARENT','(', row, column+1)
+                        column = column + 1
+                        self.set_token('LEFT_PARENT','(', row, column)
                         x = re.sub("^Math.pow\(", "", word)
                         if re.findall(',', x):
                             y = re.sub(',', '', x)
-                            self.set_token('ID', y, row, column+1) # FIRST PARAMETER
+                            column = column + 1
+                            self.set_token('ID', y, row, column) # FIRST PARAMETER
                         else:
-                            self.set_token('ID', x, row, column+1) # FIRST PARAMETER
+                            column = column + 1
+                            self.set_token('ID', x, row, column) # FIRST PARAMETER
                         parameters_found = True
                         if re.findall(",", word):
-                            self.set_token('COMA', ',', row, column + 1)
+                            column = column + 1
+                            self.set_token('COMA', ',', row, column)
                     continue
 
                 elif parameters_found == True:
@@ -243,20 +286,54 @@ class Scanner:
 
                 elif re.findall('console.log', word) and string_found == False:
                     self.set_token('RESERVED_CONSOLE', 'console', row, column)
-                    self.set_token('DOT', '.', row, column + 1)
-                    self.set_token('RESERVED_LOG', 'log', row, column + 1)
+                    column = column + 1
+                    self.set_token('DOT', '.', row, column)
+                    column = column + 1
+                    self.set_token('RESERVED_LOG', 'log', row, column)
                     if re.findall('\(', word):
-                        self.set_token('LEFT_PARENT','(', row, column+1)
+                        column = column + 1
+                        self.set_token('LEFT_PARENT','(', row, column)
                         z = re.sub("console.log", '', word)
                         y = re.sub("\(", '', z)
                         w = re.sub("\)", '', y)
+                        parent_found = False
+                        if re.findall('\)', word):
+                            parent_found = True
                         if w.startswith('"'):
                             self.aux += w + ' '
                             clgstring_found = True
+                            if w.endswith(';') and clgstring_found == True:
+                                if re.findall(';', w):
+                                    z = re.sub(';', '',w)
+                                    column = column + 1
+                                    self.set_token('STRING', z, row, column)
+                                    column = column + 1
+                                    self.set_token('SEMICOLON', ';', row, column)
+                                else:
+                                    column = column + 1
+                                    self.set_token('STRING', self.aux, row, column)
+                                if re.findall('\)', w):
+                                    column = column + 1
+                                    self.set_token('RIGHT_PARENT', ')', row, column)
+                                if parent_found == True:
+                                    column = column + 1
+                                    self.set_token('RIGHT_PARENT', ')', row, column)
+                                    parent_found = False
+                                clgstring_found = False
+                            elif w.endswith('"'):
+                                column = column + 1
+                                self.set_token('STRING', w, row, column)
+                                if parent_found == True:
+                                    column = column + 1
+                                    self.set_token('RIGHT_PARENT', ')', row, column)
+                                    parent_found = False
+                                clgstring_found = False
                         else:
-                            self.set_token('ID', w, row, column + 1)
+                            column = column + 1
+                            self.set_token('ID', w, row, column)
                             variable_found = True
-                            self.set_token('RIGHT_PARENT', ')', row, column + 1)
+                            column = column + 1
+                            self.set_token('RIGHT_PARENT', ')', row, column)
 
                     continue
 
@@ -278,7 +355,8 @@ class Scanner:
                     x = re.sub('\)', '', self.aux)
                     print('AUX:', x)
                     self.set_token("STRING", x, row, column)
-                    self.set_token("RIGHT_PARENT", ')', row, column+1)
+                    column = column + 1
+                    self.set_token("RIGHT_PARENT", ')', row, column)
                     clgstring_found = False
                     continue
 
@@ -292,8 +370,10 @@ class Scanner:
                     y = re.sub('[;]', '', x)
                     print('AUX:', y)
                     self.set_token("STRING", y, row, column)
-                    self.set_token("RIGHT_PARENT", ')', row, column+1)
-                    self.set_token("SEMICOLON", ';', row, column+1)
+                    column = column + 1
+                    self.set_token("RIGHT_PARENT", ')', row, column)
+                    column = column + 1
+                    self.set_token("SEMICOLON", ';', row, column)
                     clgstring_found = False
                     continue
 
@@ -320,17 +400,21 @@ class Scanner:
                         self.set_token('RESERVED_TRUE', x, row, column)
                     else:
                         self.set_token('ID', x, row, column)
-                    self.set_token('SEMICOLON',';', row, column+1)
+                        column = column + 1
+                    self.set_token('SEMICOLON',';', row, column)
 
                 elif re.match(function_pattern, word):
                     x = re.sub(function_id_pattern, '', word)
                     y = re.findall("[;]",x)
                     z = re.sub("[;]", "", x)
                     self.set_token('LEFT_PARENT', '(', row, column)
-                    self.set_token('ID', z, row, column + 1)
-                    self.set_token('RIGHT_PARENT', ')', row, column+1)
+                    column = column + 1
+                    self.set_token('ID', z, row, column)
+                    column = column + 1
+                    self.set_token('RIGHT_PARENT', ')', row, column)
                     if len(y) > 0:
-                        self.set_token('SEMICOLON', ';', row, column+1)
+                        column = column + 1
+                        self.set_token('SEMICOLON', ';', row, column)
                     continue
 
                 elif comment_found == True:
@@ -367,35 +451,49 @@ class Scanner:
 
                     elif word.startswith('('):
                         x = re.sub('\(','', word)
-                        self.set_token('LEFT_PARENT', '(', row, column + 1)
+                        column = column + 1
+                        self.set_token('LEFT_PARENT', '(', row, column)
                         if re.findall(',', word):
                             y = re.sub(',','',x)
-                            self.set_token('ID', y, row, column + 1)
-                            self.set_token('COMA',',', row, column + 1)
+                            column = column + 1
+                            self.set_token('ID', y, row, column )
+                            column = column + 1
+                            self.set_token('COMA',',', row, column)
                         else:
-                            self.set_token('ID', x, row, column + 1)
+                            column = column + 1
+                            self.set_token('ID', x, row, column)
                         continue
 
                     elif word.endswith(')'):
                         x = re.sub('\)','', word)
                         if re.match('[0-9]+', x):
                             self.set_token('NUMBER', x, row, column)
-                            self.set_token('RIGHT_PARENT', ')', row, column + 1)
+                            column = column + 1
+                            self.set_token('RIGHT_PARENT', ')', row, column)
                         elif re.findall('[+]+', x):
                             y = re.sub('[+]+','', x)
                             if y:
-                                self.set_token('ID', y, row, column + 1)
-                            self.set_token('INCR_OP', '++',row, column+1)
-                            self.set_token('RIGHT_PARENT', ')', row, column + 1)
+                                column = column + 1
+                                self.set_token('ID', y, row, column)
+                            column = column + 1
+                            self.set_token('INCR_OP', '++',row, column)
+                            column = column + 1
+                            self.set_token('RIGHT_PARENT', ')', row, column)
                         elif re.findall('[-]+', x):
                             y = re.sub('[-]+','', x)
                             if y:
-                                self.set_token('ID', y, row, column + 1)
-                            self.set_token('DECR_OP', '--',row, column+1)
-                            self.set_token('RIGHT_PARENT', ')', row, column + 1)
+                                column = column + 1
+                                self.set_token('ID', y, row, column )
+                            column = column + 1
+                            self.set_token('DECR_OP', '--',row, column)
+                            column = column + 1
+                            self.set_token('RIGHT_PARENT', ')', row, column )
                         else:
-                            self.set_token('ID', x, row, column + 1)
-                            self.set_token('RIGHT_PARENT', ')', row, column + 1)
+                            column = column + 1
+                            self.set_token('ID', x, row, column )
+                            column = column + 1
+
+                            self.set_token('RIGHT_PARENT', ')', row, column )
                         continue
 
                     elif word == 'var':
@@ -496,9 +594,13 @@ class Scanner:
 
                     elif word.startswith('this'):
                         self.set_token('RESERVED_THIS','this', row, column)
-                        self.set_token('DOT','.', row, column+1)
+                        column = column + 1
+
+                        self.set_token('DOT','.', row, column)
                         x = re.sub('this\.','',word)
-                        self.set_token('ID', x, row,column+1)
+                        column = column + 1
+
+                        self.set_token('ID', x, row,column)
                         continue
                     elif word.endswith('\''):
                         self.aux += word
