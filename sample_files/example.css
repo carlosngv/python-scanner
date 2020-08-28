@@ -2,6 +2,7 @@
     margin-top: 50px;
     margin-bottom: 50px;
     text-align: center;
+    color: rgba(255, 0, 0);
 }
 
 container#example { sdfsd @
@@ -9,7 +10,7 @@ container#example { sdfsd @
 }
 /* esto es un comentario
 multilinea @ */
-hola-mundo {
+.hola-mundo, .adios-mundo {
 content: "hola mundo";
 content: "adios";
 font-size: 54%
@@ -19,7 +20,9 @@ a:hover {
     color: blue;
     background: #aaff03;
     size: -32px;
-    hola: 32.43
+    hola: 32.43;
+    url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'");
+
 }
 
 *::before, ax:after {
@@ -29,4 +32,41 @@ a:hover {
 
 #property {
 shadow-box: 1 2 3 0;
+}
+
+body {
+background-color: #00ff00
+}
+
+h1, h2 {
+background-color: #00ff00;
+}
+
+div2 {
+color: purple;
+background-color: #d8da3d; }
+
+/* Inicio deL archivo css */
+p{
+color: red;
+}
+/* pueden venir 1 o n reglas */
+miLabel {
+color: red;
+font-size: 5em; }
+/* fin del archivo */
+
+.ejemplo{
+margin-top: 0;
+margin-bottom: 0.5em;
+line-height: inherit;
+position: relative;
+font-size: 75%;
+color: #333;
+border-top: 2px solid rgba(0, 0, 0, 0.1);
+content: "\2014\00A0";
+position: absolute;
+background-image: url("/home/documents/picture.png"); background-color: rgba(220, 53, 69, 0.9);
+font: 76% arial, sans-serif;
+background: 0 0 0 0.2rem rgba(51, 51, 51, 0.25);
 }

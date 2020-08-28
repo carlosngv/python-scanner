@@ -14,6 +14,7 @@ import re
 import sys
 from JS.scanner import Scanner as js_scanner
 from CSS.scanner import Scanner as css_scanner
+from HTML.scanner import Scanner as html_scanner
 
 class Ui_MainWindow(QWidget):
     def setupUi(self, MainWindow):
@@ -307,8 +308,17 @@ class Ui_MainWindow(QWidget):
 
     def scan_input(self):
         data = str(self.plainTextEdit_2.toPlainText())
-        print(data)
-        new_scanner = Scanner()
+        console = str(self.plainTextEdit.toPlainText())
+        words = console.split()
+        file_type = words[1]
+        print(file_type)
+        new_scanner = ""
+        if file_type == 'HTML':
+            new_scanner = html_scanner()
+        elif file_type == 'CSS':
+            new_scanner = css_scanner()
+        elif file_type == 'JavaScript':
+            new_scanner = js_scanner()
         new_scanner.scan(data)
         if len(new_scanner.error_list):
             for error in new_scanner.error_list:
@@ -333,7 +343,7 @@ class Ui_MainWindow(QWidget):
                     self.plainTextEdit.appendPlainText('>> JavaScript File')
                     # New scanner to analyze input
                     new_scanner = js_scanner()
-                    new_scanner.scan(str)
+                    #new_scanner.scan(str)
                     x = str.splitlines()
                     for line in x:
                         y = line.rsplit(' ')
@@ -354,7 +364,7 @@ class Ui_MainWindow(QWidget):
                     self.plainTextEdit.clear()
                     self.plainTextEdit.appendPlainText('>> CSS File')
                     new_scanner = css_scanner()
-                    new_scanner.scan(str)
+                   # new_scanner.scan(str)
                     x = str.splitlines()
                     for line in x:
                         y = line.rsplit(' ')
@@ -362,6 +372,26 @@ class Ui_MainWindow(QWidget):
                             word = word.lstrip('\t')
                     for error in new_scanner.error_list:
                         self.plainTextEdit.appendPlainText('>> '+ error.get_message())
+                    if len(new_scanner.error_list):
+                        self.error_html(new_scanner.error_list)
+                    self.generate_html(new_scanner.token_list)
+                    self.plainTextEdit_2.insertPlainText(str)
+                    f.close()
+            elif file_name[0].endswith('.html'):
+                with open(file_name[0], 'r') as f:
+                    str = f.read()
+                    self.plainTextEdit_2.clear()
+                    self.plainTextEdit.clear()
+                    self.plainTextEdit.appendPlainText('>> HTML File')
+                    new_scanner = css_scanner()
+                   # new_scanner.scan(str)
+                    x = str.splitlines()
+                    for line in x:
+                        y = line.rsplit(' ')
+                        for word in y:
+                            word = word.lstrip('\t')
+                    for error in new_scanner.error_list:
+                        self.plainTextEdit.appendPlainText('>> ' + error.get_message())
                     if len(new_scanner.error_list):
                         self.error_html(new_scanner.error_list)
                     self.generate_html(new_scanner.token_list)
@@ -385,7 +415,7 @@ class Ui_MainWindow(QWidget):
                     </head>
                     <body>
                         <div class="container">
-                        <h1>Tabla de Errorest</h1>
+                        <h1>Tabla de Errores</h1>
                         <table class="table table-striped">
                           <thead class="thead-dark">
                             <tr>
