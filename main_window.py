@@ -311,10 +311,10 @@ class Ui_MainWindow(QWidget):
         console = str(self.plainTextEdit.toPlainText())
         words = console.split()
         file_type = words[1]
-        print(file_type)
         new_scanner = ""
         if file_type == 'HTML':
             new_scanner = html_scanner()
+            #data = data.replace(' ','')
         elif file_type == 'CSS':
             new_scanner = css_scanner()
         elif file_type == 'JavaScript':
@@ -325,6 +325,7 @@ class Ui_MainWindow(QWidget):
                 self.plainTextEdit.appendPlainText('>> ' + error.get_message())
             self.error_html(new_scanner.error_list)
         self.generate_html(new_scanner.token_list)
+
 
 
     def get_file(self):

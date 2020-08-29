@@ -30,21 +30,15 @@ a:hover {
 }
 
 
-#property {
-shadow-box: 1 2 3 0;
+/* Inicio deL archivo css */
+p{
+color: red;
 }
-
-body {
-background-color: #00ff00
-}
-
-h1, h2 {
-background-color: #00ff00;
-}
-
-div2 {
-color: purple;
-background-color: #d8da3d; }
+/* pueden venir 1 o n reglas */
+miLabel {
+color: red;
+font-size: 5em; }
+/* fin del archivo */
 
 /* Inicio deL archivo css */
 p{
