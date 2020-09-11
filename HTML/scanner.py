@@ -19,11 +19,12 @@ class Scanner:
         self.state = 0
         self.row = 1
         self. column = 0
+        self.dataAux = ''
 
     def scan(self,data):
         input = data.splitlines()
         data = list(data)
-       # print(data)
+        self.dataAux = data
         for line in input:
             line = list(line)
             for char in line:
@@ -34,7 +35,7 @@ class Scanner:
                         self.state = 0
                     elif char == '>':
                         self.set_token('GREATER_THAN', char)
-                        self.state = 0
+                        self.state = 57
                     elif char == '=':
                         self.set_token('EQUAL', char)
                         self.state = 0
@@ -62,8 +63,14 @@ class Scanner:
                         self.aux += char
                         self.state = 41
                     elif char == 'a' or char == 'A':
-                        self.set_token('A_TAG', char)
-                        self.state = 0
+                        self.aux += char
+                        self.state = 48
+                    elif char == 's' or char == 'S':
+                        self.aux += char
+                        self.state = 50
+                    elif char == 'i' or char == 'I':
+                        self.aux += char
+                        self.state = 55
                     elif char == 'u' or char == 'U':
                         self.aux += char
                         self.state = 45
@@ -87,6 +94,9 @@ class Scanner:
                     elif char == 'e' or char == 'E':
                         self.aux += char
                         self.state = 4
+                    elif char == 'r' or char == 'R':
+                        self.aux += char
+                        self.state = 46
                     else:
                         self.aux += char
                         self.set_token('ID', self.aux)
@@ -177,8 +187,11 @@ class Scanner:
                     if char == 'e' or char == 'E':
                         self.aux += char
                         self.state = 11
-                    elif self.aux == 'th':
+                    elif self.aux == 'th' or char == '>':
                         self.set_token('TH_TAG', self.aux)
+                        if char == '>':
+                            self.set_token('GREATER_THAN', char)
+                            self.state = 57
                     else:
                         self.aux += char
                         self.set_token('ID', self.aux)
@@ -264,6 +277,9 @@ class Scanner:
                     if char == 'o' or char == 'O':
                         self.aux += char
                         self.state = 24
+                    elif char == 'r' or char == 'R':
+                        self.aux += char
+                        self.set_token('BR_TAG', self.aux)
                     else:
                         self.aux += char
                         self.set_token('ID', self.aux)
@@ -435,6 +451,106 @@ class Scanner:
                     else:
                         self.aux += char
                         self.set_token('ID', self.aux)
+                # HREF
+                elif self.state == 46:
+                    if char == 'e' or char == 'E':
+                        self.aux += char
+                        self.state = 47
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                elif self.state == 47:
+                    if char == 'f' or char == 'F':
+                        self.aux += char
+                        self.set_token('RESERVED_HREF', self.aux)
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                elif self.state == 48:
+                    if char == 'l' or char == 'L':
+                        self.aux += char
+                        self.state = 49
+                    elif char == ' ' or char == '':
+                        self.set_token('A_TAG', self.aux)
+                    elif char == '>':
+                        self.set_token('A_TAG', self.aux)
+                        self.set_token('GREATER_THAN', char)
+                        self.state = 57
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                elif self.state == 49:
+                    if char == 't' or char == 'T':
+                        self.aux += char
+                        self.set_token('RESERVED_ALT', self.aux)
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                elif self.state == 50:
+                    if char == 't' or char == 'T':
+                        self.aux += char
+                        self.state = 51
+                    elif char == 'r' or char == 'R':
+                        self.aux += char
+                        self.state = 54
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                elif self.state == 51:
+                    if char == 'y' or char == 'Y':
+                        self.aux += char
+                        self.state = 52
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                elif self.state == 52:
+                    if char == 'l' or char == 'L':
+                        self.aux += char
+                        self.state = 53
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                elif self.state == 53:
+                    if char == 'e' or char == 'E':
+                        self.aux += char
+                        self.set_token('RESERVED_STYLE', self.aux)
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                elif self.state == 54:
+                    if char == 'c' or char == 'C':
+                        self.aux += char
+                        self.set_token('RESERVED_SRC', self.aux)
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                # IMG
+                elif self.state == 55:
+                    if char == 'm' or char == 'M':
+                        self.aux += char
+                        self.state = 56
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                elif self.state == 56:
+                    if char == 'g' or char == 'G':
+                        self.aux += char
+                        self.set_token('IMG_TAG', self.aux)
+                    else:
+                        self.aux += char
+                        self.set_token('ID', self.aux)
+                # TEXT BETWEEN > example <
+                elif self.state == 57:
+                    if char != '<':
+                        if char == '\n':
+                            pass
+                        else:
+                            self.aux += char
+                        self.state = 57
+                    elif char == '<':
+                        if not re.match('(^$| +)', self.aux):
+                            self.set_token('TEXT', self.aux)
+                        self.set_token('LESS_THAN', char)
 
             self.row += 1
             self.column = 0
@@ -451,6 +567,7 @@ class Scanner:
             print('Token is already in.')
 
     def set_error(self, value,row):
+        self.dataAux = self.dataAux.replace(value, '')
         self.aux = ""
         new_error = Error(value, "La entrada \"" + value + "\" en la fila " + str(row) + " no pertenece al lenguaje.")
         self.error_list.append(new_error)

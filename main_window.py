@@ -314,12 +314,20 @@ class Ui_MainWindow(QWidget):
         new_scanner = ""
         if file_type == 'HTML':
             new_scanner = html_scanner()
+            new_scanner.scan(data)
             #data = data.replace(' ','')
         elif file_type == 'CSS':
             new_scanner = css_scanner()
+            transitions = new_scanner.transitions_list
+            new_scanner.scan(data)
+            for transition in transitions:
+                value = transition.get_value()
+                value = value.replace('\t','')
+                self.plainTextEdit.appendPlainText('>> ' + value + ' STATE: ' + str(transition.get_state()))
         elif file_type == 'JavaScript':
             new_scanner = js_scanner()
-        new_scanner.scan(data)
+            new_scanner.scan(data)
+        print(new_scanner.dataAux)
         if len(new_scanner.error_list):
             for error in new_scanner.error_list:
                 self.plainTextEdit.appendPlainText('>> ' + error.get_message())
