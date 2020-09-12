@@ -17,7 +17,7 @@ class Scanner:
         self.error_list = []
         self.reserved = [
             'function', 'return', 'while', 'for', 'document', 'getElementById', 'if', 'else', 'constructor', 'console', 'log',
-            'break', 'var', 'true', 'false', 'value', 'new', 'Object', 'push', 'Array', 'appendChild', 'setAttribute',
+            'break', 'true', 'false', 'value', 'new', 'Object', 'push', 'Array', 'appendChild', 'setAttribute',
             'innerHTML', 'innerText', 'element', 'createElement', 'JSON', 'Items', 'stringify', 'clear', 'fromHTML', 'forEach',
             'location', 'href', 'sessionStorage', 'getItem', 'null', 'this', 'Math', 'pow', 'class', 'save', 'ajax', 'parseInt',
             'instanceof', 'default', 'break', 'debugger', 'in', 'void','typeof','try','switch', 'throw', 'catch', 'finally'
@@ -38,7 +38,6 @@ class Scanner:
        # print(data)
         for line in input:
             line = list(line)
-            print(line)
             if comment_found == True:
                 self.set_token('COMMENT', self.aux)
                 comment_found = False
@@ -114,7 +113,42 @@ class Scanner:
                         comment_found = True
                     else:
                         self.aux += char
-                        self.set_token('SLASH', self.aux)
+                        self.set_token('DIV_OPT', self.aux)
+                        if char.isdigit():
+                            self.state = 11
+                        if char == ')':
+                            self.set_token('RIGHT_PARENT', char)
+                        elif char == '(':
+                            self.set_token('LEFT_PARENT', char)
+                        elif char == ';':
+                            self.set_token('SEMICOLON', char)
+                        elif char == '.':
+                            self.set_token('DOT', char)
+                        elif char == ':':
+                            self.set_token('COLON', char)
+                        elif char == '{':
+                            self.set_token('LEFT_BRACE', char)
+                        elif char == '}':
+                            self.set_token('RIGHT_BRACE', char)
+                        elif char == ',':
+                            self.set_token('COMMA', char)
+                        elif char == '=':
+                            self.set_token('EQUAL_OPT', char)
+                        elif char == '<':
+                            self.set_token('LESS_THAN', char)
+                        elif char == '>':
+                            self.set_token('GREATER_THAN', char)
+                        elif char == '*':
+                            self.set_token('MULT_OPT', char)
+                        elif char == '+':
+                            self.set_token('ADD_OPT', char)
+                        elif char == '-':
+                            self.set_token('SUBS_OPT', char)
+                        elif char == '/':
+                            self.set_token('DIV_OPT', char)
+                        elif char.isalpha():
+                            self.aux += char
+                            self.state = 5
                 elif self.state == 2:
                     if char == '*':
                         self.aux += char
@@ -161,6 +195,14 @@ class Scanner:
                             self.set_token('LESS_THAN', char)
                         elif char == '>':
                             self.set_token('GREATER_THAN', char)
+                        elif char == '*':
+                            self.set_token('MULT_OPT', char)
+                        elif char == '+':
+                            self.set_token('ADD_OPT', char)
+                        elif char == '-':
+                            self.set_token('SUBS_OPT', char)
+                        elif char == '/':
+                            self.set_token('DIV_OPT', char)
                     else:
                         self.state = 5
                         self.aux += char
@@ -169,13 +211,73 @@ class Scanner:
                         self.aux += char
                         self.set_token("INCR_OPT", self.aux)
                     else:
-                        self.set_token("SUM_OPT", self.aux )
+                        self.set_token("ADD_OPT", self.aux )
+                        if char == ')':
+                            self.set_token('RIGHT_PARENT', char)
+                        elif char == '(':
+                            self.set_token('LEFT_PARENT', char)
+                        elif char == ';':
+                            self.set_token('SEMICOLON', char)
+                        elif char == '.':
+                            self.set_token('DOT', char)
+                        elif char == ':':
+                            self.set_token('COLON', char)
+                        elif char == '{':
+                            self.set_token('LEFT_BRACE', char)
+                        elif char == '}':
+                            self.set_token('RIGHT_BRACE', char)
+                        elif char == ',':
+                            self.set_token('COMMA', char)
+                        elif char == '=':
+                            self.set_token('EQUAL_OPT', char)
+                        elif char == '<':
+                            self.set_token('LESS_THAN', char)
+                        elif char == '>':
+                            self.set_token('GREATER_THAN', char)
+                        elif char == '*':
+                            self.set_token('MULT_OPT', char)
+                        elif char == '+':
+                            self.set_token('ADD_OPT', char)
+                        elif char == '-':
+                            self.set_token('SUBS_OPT', char)
+                        elif char == '/':
+                            self.set_token('DIV_OPT', char)
                 elif self.state == 7:
                     if char == '-':
                         self.aux += char
                         self.set_token("DECR_OPT", self.aux)
                     else:
                         self.set_token("SUBS_OPT", self.aux )
+                        if char == ')':
+                            self.set_token('RIGHT_PARENT', char)
+                        elif char == '(':
+                            self.set_token('LEFT_PARENT', char)
+                        elif char == ';':
+                            self.set_token('SEMICOLON', char)
+                        elif char == '.':
+                            self.set_token('DOT', char)
+                        elif char == ':':
+                            self.set_token('COLON', char)
+                        elif char == '{':
+                            self.set_token('LEFT_BRACE', char)
+                        elif char == '}':
+                            self.set_token('RIGHT_BRACE', char)
+                        elif char == ',':
+                            self.set_token('COMMA', char)
+                        elif char == '=':
+                            self.set_token('EQUAL_OPT', char)
+                        elif char == '<':
+                            self.set_token('LESS_THAN', char)
+                        elif char == '>':
+                            self.set_token('GREATER_THAN', char)
+                        elif char == '*':
+                            self.set_token('MULT_OPT', char)
+                        elif char == '+':
+                            self.set_token('ADD_OPT', char)
+                        elif char == '-':
+                            self.set_token('SUBS_OPT', char)
+                        elif char == '/':
+                            self.set_token('DIV_OPT', char)
                 elif self.state == 8:
                     if char == '=':
                         self.aux += char
@@ -233,6 +335,14 @@ class Scanner:
                             self.set_token('LESS_THAN', char)
                         elif char == '>':
                             self.set_token('GREATER_THAN', char)
+                        elif char == '*':
+                            self.set_token('MULT_OPT', char)
+                        elif char == '+':
+                            self.set_token('ADD_OPT', char)
+                        elif char == '-':
+                            self.set_token('SUBS_OPT', char)
+                        elif char == '/':
+                            self.set_token('DIV_OPT', char)
                     else:
                         self.state = 11
                         self.aux += char

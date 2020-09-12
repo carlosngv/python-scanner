@@ -9,10 +9,12 @@
 
 from PyQt5.QtCore import QDir
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog, QDialog, QWidget, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QFileDialog, QDialog, QWidget, QLabel, QPushButton, QVBoxLayout, QComboBox
 import re
 import sys
 from JS.scanner import Scanner as js_scanner
+from JS.token import Token as js_token
+from JS.parser import JSParser as js_parser
 from CSS.scanner import Scanner as css_scanner
 from HTML.scanner import Scanner as html_scanner
 
@@ -242,11 +244,24 @@ class Ui_MainWindow(QWidget):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(270, 10, 161, 51))
 
+        self.combobox = QtWidgets.QComboBox(self.centralwidget)
+        self.combobox.addItem("JAVASCRIPT")
+        self.combobox.addItem("CSS")
+        self.combobox.addItem("HTML")
+        self.combobox.addItem("PARSER JS")
+        self.combobox.setGeometry(QtCore.QRect(525, 15, 161, 51))
+
+
+
         font = QtGui.QFont()
         font.setFamily("Ubuntu Condensed")
         font.setPointSize(36)
         font.setBold(True)
         font.setWeight(75)
+
+        self.combobox.setObjectName("ComboBox")
+
+
 
         self.label.setFont(font)
         self.label.setObjectName("label")
@@ -310,29 +325,63 @@ class Ui_MainWindow(QWidget):
         data = str(self.plainTextEdit_2.toPlainText())
         console = str(self.plainTextEdit.toPlainText())
         words = console.split()
-        file_type = words[1]
         new_scanner = ""
-        if file_type == 'HTML':
+        txt = self.combobox.currentText()
+        if txt == 'HTML':
             new_scanner = html_scanner()
             new_scanner.scan(data)
+            if len(new_scanner.error_list):
+                for error in new_scanner.error_list:
+                    self.plainTextEdit.appendPlainText('>> ' + error.get_message())
+                self.error_html(new_scanner.error_list)
+            self.generate_html(new_scanner.token_list)
             #data = data.replace(' ','')
-        elif file_type == 'CSS':
+        elif txt == 'CSS':
             new_scanner = css_scanner()
             transitions = new_scanner.transitions_list
             new_scanner.scan(data)
             for transition in transitions:
                 value = transition.get_value()
                 value = value.replace('\t','')
-                self.plainTextEdit.appendPlainText('>> ' + value + ' STATE: ' + str(transition.get_state()))
-        elif file_type == 'JavaScript':
+                self.plainTextEdit.appendPlainText('>> ' + value + ' Estado: ' + str(transition.get_state()))
+            if len(new_scanner.error_list):
+                for error in new_scanner.error_list:
+                    self.plainTextEdit.appendPlainText('>> ' + error.get_message())
+                self.error_html(new_scanner.error_list)
+            self.generate_html(new_scanner.token_list)
+        elif txt == 'JAVASCRIPT':
             new_scanner = js_scanner()
             new_scanner.scan(data)
-        print(new_scanner.dataAux)
-        if len(new_scanner.error_list):
-            for error in new_scanner.error_list:
-                self.plainTextEdit.appendPlainText('>> ' + error.get_message())
-            self.error_html(new_scanner.error_list)
-        self.generate_html(new_scanner.token_list)
+            token_list = new_scanner.token_list
+
+            if len(new_scanner.error_list):
+                for error in new_scanner.error_list:
+                    self.plainTextEdit.appendPlainText('>> ' + error.get_message())
+                self.error_html(new_scanner.error_list)
+            self.generate_html(new_scanner.token_list)
+        elif txt == 'PARSER JS':
+            new_scanner = js_scanner()
+            new_scanner.scan(data)
+            new_scanner.token_list.append(js_token('LAST', '', 0, 0))
+            token_list = new_scanner.token_list
+            new_parser = js_parser()
+            new_parser.parse(token_list)
+            if len(new_parser.error_list):
+                for error in new_parser.error_list:
+                    print(error.get_error() + " expected")
+                    self.plainTextEdit.appendPlainText('>> Se esperaba ' + error.get_error())
+            else:
+                self.plainTextEdit.appendPlainText('>> Entrada correcta')
+            if len(new_scanner.error_list):
+                for error in new_scanner.error_list:
+                    self.plainTextEdit.appendPlainText('>> ' + error.get_message())
+                self.error_html(new_scanner.error_list)
+            self.generate_html(new_scanner.token_list)
+        else:
+            self.plainTextEdit.appendPlainText('>> Archivo no válido. Intente de nuevo.')
+        # for token in new_scanner.token_list:
+              #  print(token.get_type())
+
 
 
 
