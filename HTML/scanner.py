@@ -20,12 +20,22 @@ class Scanner:
         self.row = 1
         self. column = 0
         self.dataAux = ''
+        self.route = ''
 
     def scan(self,data):
         input = data.splitlines()
         data = list(data)
         self.dataAux = data
         for line in input:
+            lineAux = line
+            if re.findall('PATHL:', lineAux):
+                lineAux = lineAux.replace(' ', '')
+                lineAux = lineAux.replace('<!--', '')
+                lineAux = lineAux.replace('-->', '')
+                lineAux = lineAux.replace('PATHL:', '')
+                self.route = lineAux
+                print(lineAux)
+                continue
             line = list(line)
             for char in line:
                # print(char)

@@ -53,7 +53,8 @@ class Scanner:
             lineAux = line
             if re.findall('PATHL:', lineAux):
                 lineAux = lineAux.replace(' ', '')
-                lineAux = lineAux.replace('//', '')
+                lineAux = lineAux.replace('/*', '')
+                lineAux = lineAux.replace('*/', '')
                 lineAux = lineAux.replace('PATHL:', '')
                 self.route = lineAux
                 print(lineAux)
