@@ -1,11 +1,12 @@
 from JS.token import Token
 
 class Error:
-    def __init__(self, error):
+    def __init__(self, error ):
         self.error = error
 
     def get_error(self):
         return self.error
+
 # For each Non-Terminal on the left-side implement a method. For each Non-Terminal on the right-side make a call to corresponded method.
 # For each Terminal on the right-side, match.
 class JSParser:
@@ -13,13 +14,16 @@ class JSParser:
         self.error_list = []
         self.numPreToken = 0
         self.preToken = ''
-        self.data = ''
+        self.data = []
 
     def parse(self, dataAux):
         self.data = dataAux
         self.numPreToken = 0
         self.preToken = self.data[self.numPreToken]
         self.E()
+        new_error = Error(self.getError(self.preToken.get_type()))
+        if self.getError(self.preToken.get_type()) != 'Desconocido':
+            self.error_list.append(new_error)
 
     def E(self):
         # E-> T EP
@@ -37,8 +41,6 @@ class JSParser:
             self.match('SUBS_OPT')
             self.T()
             self.EP()
-        else:
-            return
         # EP-> EPSILON
 
     def T(self):
@@ -71,7 +73,7 @@ class JSParser:
         elif self.preToken.get_type() == 'ID':
             # F -> ID
             self.match('ID')
-        else:
+        elif self.preToken.get_type() == 'NUMBER':
             # F -> NUMBER
             self.match('NUMBER')
 

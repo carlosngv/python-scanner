@@ -27,6 +27,7 @@ class Scanner:
         self.row = 1
         self. column = 0
         self.dataAux = ''
+        self.route = ''
 
     def scan(self,data):
 
@@ -35,8 +36,15 @@ class Scanner:
         self.dataAux = data
         input = data.splitlines()
         data = list(data)
-       # print(data)
         for line in input:
+            lineAux = line
+            if re.findall('PATHL:', line):
+                lineAux = lineAux.replace(' ','')
+                lineAux = lineAux.replace('//','')
+                lineAux = lineAux.replace('PATHL:','')
+                self.route = lineAux
+                print(lineAux)
+                continue
             line = list(line)
             if comment_found == True:
                 self.set_token('COMMENT', self.aux)
@@ -112,7 +120,6 @@ class Scanner:
                         self.state = 4
                         comment_found = True
                     else:
-                        self.aux += char
                         self.set_token('DIV_OPT', self.aux)
                         if char.isdigit():
                             self.state = 11

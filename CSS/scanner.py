@@ -29,6 +29,7 @@ class Scanner:
         self.aux = ''
         self.dataAux = ''
         self.state = 0
+        self.route = ''
         self.row = 1
         self. column = 0
         self.reserved = ['color', 'border', 'background-color', 'Opacity', 'font-family', ' font-size', 'padding-right',
@@ -49,6 +50,14 @@ class Scanner:
         self.dataAux = data
         data = list(data)
         for line in input:
+            lineAux = line
+            if re.findall('PATHL:', lineAux):
+                lineAux = lineAux.replace(' ', '')
+                lineAux = lineAux.replace('//', '')
+                lineAux = lineAux.replace('PATHL:', '')
+                self.route = lineAux
+                print(lineAux)
+                continue
             line = list(line)
             for char in line:
                 if self.state == 0:
@@ -75,39 +84,70 @@ class Scanner:
                         self.set_transition(self.aux, self.state)
                         self.state = 6
                     elif char == '%' :
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
                         self.set_token('PERCENTAGE_SIGN', char)
+
                     elif char == '#':
+
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                         self.set_token('HASHTAG_SYMB', char)
                     elif char == '+':
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                         self.set_token('ADD_OPT', char)
                     elif char == '*':
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                         self.set_token('ASTERISK', char)
                     elif char == '-':
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                         self.set_token('SUBS_OPT', char)
                     elif char == ':':
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                         self.set_token('COLON', char)
                     elif char == ';':
                         self.set_token('SEMICOLON', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                     elif char == '=':
                         self.set_token('EQUAL_OPT', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                     elif char == '{':
                         self.set_token('LEFT_BRACE', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                     elif char == '}':
                         self.set_token('RIGHT_BRACE', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                     elif char == ')':
                         self.set_token('RIGHT_PARENT', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                     elif char == '(':
                         self.set_token('LEFT_PARENT', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                     elif char == '.':
                         self.set_token('DOT', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                     elif char == '>':
                         self.set_token('GREATER_THAN', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                     elif char == '<':
                         self.set_token('LESS_THAN', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
 
                     else:
                         self.set_error(char, self.row)
-                        new_transition = Transition('**** ERROR ' + char + ' *****', 0)
+                        new_transition = Transition('***** ERROR ' + char + ' *****', 0)
 
                         self.transitions_list.append(new_transition)
                 elif self.state == 1:
@@ -131,9 +171,8 @@ class Scanner:
                         self.state = 2
                     elif char == '/' and self.aux.endswith("*"):
                         self.aux += char
-
+                        new_transition = Transition('Entrada ' + self.aux + ' aceptada', 2)
                         self.set_token('COMMENT', self.aux)
-                        new_transition = Transition('Input ' + self.aux + ' accepted', 2)
                         self.transitions_list.append(new_transition)
                     else:
                         self.aux += char
@@ -146,8 +185,8 @@ class Scanner:
                         self.state = 3
                     else:
                         self.aux += char
+                        new_transition = Transition('Entrada ' + self.aux + ' aceptada', 3)
                         self.set_token('STRING', self.aux)
-                        new_transition = Transition('Input ' + self.aux + ' accepted', 3)
                         self.transitions_list.append(new_transition)
                 elif self.state == 4:
                     if not char == "'":
@@ -156,6 +195,8 @@ class Scanner:
                         self.state = 4
                     else:
                         self.aux += char
+                        new_transition = Transition('Entrada ' + self.aux + ' aceptada', 3)
+                        self.transitions_list.append(new_transition)
                         self.set_token('STRING', self.aux)
                 elif self.state == 5:
                     if char.isalpha():
@@ -178,54 +219,54 @@ class Scanner:
                         if char.isdigit():
                             self.aux += char
                             self.state = 5
-                        self.set_token(self.reservedToken(self.aux), self.aux)
-                        new_transition = Transition('Input ' + self.aux + ' accepted', 6)
+                        new_transition = Transition('Entrada ' + self.aux + ' aceptada', 5)
                         self.transitions_list.append(new_transition)
+                        self.set_token(self.reservedToken(self.aux), self.aux)
                         if char == ')':
                             self.set_token('RIGHT_PARENT', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char == '(':
                             self.set_token('LEFT_PARENT', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char == ';':
                             self.set_token('SEMICOLON', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char == '.':
                             self.set_token('DOT', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char == ':':
                             self.set_token('COLON', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char == '.':
                             self.set_token('DOT', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char == ',':
                             self.set_token('COMMA', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char == '{':
                             self.set_token('LEFT_BRACE', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char == '}':
                             self.set_token('RIGHT_BRACE', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char == '*':
                             self.set_token('ASTERISK', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char == '>':
                             self.set_token('GREATER_THAN', char)
                         elif char == '<':
                             self.set_token('LESS_THAN', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         elif char.isdigit():
                             self.aux += char
@@ -235,60 +276,60 @@ class Scanner:
                             pass
                         elif char == '=':
                             self.set_token('EQUAL_OPT', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 5)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 5)
                             self.transitions_list.append(new_transition)
                         else:
-                            new_transition = Transition('**** ERROR ' + char + ' *****', 5)
+                            new_transition = Transition('***** ERROR ' + char + ' *****', 5)
                             self.transitions_list.append(new_transition)
                             self.set_error(char, self.row)
                 elif self.state == 6:
                     if not char.isdigit():
+                        new_transition = Transition('Entrada ' + self.aux + ' aceptada', 6)
                         self.set_token("NUMBER", self.aux)
-                        new_transition = Transition('Input ' + self.aux + ' accepted', 6)
                         self.transitions_list.append(new_transition)
                         if char == ')':
                             self.set_token('RIGHT_PARENT', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char == '(':
                             self.set_token('LEFT_PARENT', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char == ';':
                             self.set_token('SEMICOLON', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char == '.':
                             self.set_token('DOT', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char == ':':
                             self.set_token('COLON', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char == '{':
                             self.set_token('LEFT_BRACE', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char == '}':
                             self.set_token('RIGHT_BRACE', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char == '.':
                             self.set_token('DOT', char)
-                            new_transition = Transition('Input ' + char + ' accepted', 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char == ',':
                             self.set_token('COMMA', char)
-                            new_transition = Transition('Input accepted ' + char, 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char == '%':
                             self.set_token('PERCENTAGE_SIGN', char)
-                            new_transition = Transition('Input accepted ' + char, 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char == '*':
                             self.set_token('ASTERISK', char)
-                            new_transition = Transition('Input accepted ' + char, 6)
+                            new_transition = Transition('Entrada ' + char + ' aceptada', 6)
                             self.transitions_list.append(new_transition)
                         elif char.isalpha():
                             self.state = 0
