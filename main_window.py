@@ -373,31 +373,28 @@ class Ui_MainWindow(QWidget):
                     self.plainTextEdit.appendPlainText('>> ' + error.get_message())
                 self.error_html(new_scanner.error_list)
             self.generate_html(new_scanner.token_list)
-            self.generate_file(new_scanner.dataAux, new_scanner.route, 'js')
+            if len(new_scanner.route) != 0:
+                self.generate_file(new_scanner.dataAux, new_scanner.route, 'js')
         elif txt == 'PARSER JS':
-            new_scanner = js_scanner()
-            new_scanner.scan(data)
-            new_scanner.token_list.append(js_token('LAST', '', 0, 0))
-            token_list = new_scanner.token_list
-            new_parser = js_parser()
-            new_parser.parse(token_list)
-            if len(new_parser.error_list):
-                for error in new_parser.error_list:
-                    new_error = Error(data, 'Inválido')
+            data = data.splitlines()
+            for line in data:
+                new_scanner = js_scanner()
+                new_scanner.scan(line)
+                new_scanner.token_list.append(js_token('LAST', '', 0, 0))
+                token_list = new_scanner.token_list
+                new_parser = js_parser()
+                new_parser.parse(token_list)
+                if len(new_parser.error_list):
+                    for error in new_parser.error_list:
+                        new_error = Error(line, 'Inválido')
+                        self.parser_errors.append(new_error)
+                        self.plainTextEdit.appendPlainText('>> Se esperaba ' + error.get_error())
+                else:
+                    new_error = Error(line, 'Válido')
                     self.parser_errors.append(new_error)
-                    self.plainTextEdit.appendPlainText('>> Se esperaba ' + error.get_error())
-
-            else:
-                new_error = Error(data, 'Válido')
-                self.parser_errors.append(new_error)
-                self.plainTextEdit.appendPlainText('>> Entrada correcta')
+                    self.plainTextEdit.appendPlainText('>> Entrada correcta')
             if len(self.parser_errors):
                 self.parser_html()
-            if len(new_scanner.error_list):
-                for error in new_scanner.error_list:
-                    self.plainTextEdit.appendPlainText('>> ' + error.get_message())
-                self.error_html(new_scanner.error_list)
-            self.generate_html(new_scanner.token_list)
         else:
             self.plainTextEdit.appendPlainText('>> Archivo no válido. Intente de nuevo.')
 
@@ -551,17 +548,17 @@ class Ui_MainWindow(QWidget):
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
                         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css" integrity="sha384-qF/QmIAj5ZaYFAeQcrQ6bfVMAh4zZlrGwTPY7T/M+iTTLJqJBJjwwnsE5Y0mV7QK" crossorigin="anonymous">
                         <link rel="stylesheet" href="styles/main.css">
-                        <title>Tabla de Errores (PARSER)</title>
+                        <title>Reporte Parser</title>
                     </head>
                     <body>
                         <div class="container">
-                        <h1>Tabla de Errores</h1>
+                        <h1>Reporte Parser</h1>
                         <table class="table table-striped">
                           <thead class="thead-dark">
                             <tr>
                               <th scope="col">Num.</th>
                             <th scope="col">Valor</th>
-                              <th scope="col">Error</th>
+                              <th scope="col">Análisis</th>
                             </tr>
                           </thead>
                           <tbody>
