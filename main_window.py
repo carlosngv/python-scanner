@@ -283,12 +283,7 @@ class Ui_MainWindow(QWidget):
         self.menubar.setObjectName("menubar")
         self.menuArchivo = QtWidgets.QMenu(self.menubar)
         self.menuArchivo.setObjectName("menuArchivo")
-        self.menuEdit = QtWidgets.QMenu(self.menubar)
-        self.menuEdit.setObjectName("menuEdit")
-        self.menuTools = QtWidgets.QMenu(self.menubar)
-        self.menuTools.setObjectName("menuTools")
-        self.menuScan = QtWidgets.QMenu(self.menubar)
-        self.menuScan.setObjectName("menuScan")
+
         self.menuReports = QtWidgets.QMenu(self.menubar)
         self.menuReports.setObjectName("menuReports")
         self.menuHelp = QtWidgets.QMenu(self.menubar)
@@ -299,6 +294,7 @@ class Ui_MainWindow(QWidget):
         MainWindow.setStatusBar(self.statusbar)
         self.actionNew = QtWidgets.QAction(MainWindow)
         self.actionNew.setObjectName("actionNew")
+        self.actionNew.triggered.connect(lambda: self.plainTextEdit_2.clear())
 
         self.actionOpen = QtWidgets.QAction(MainWindow)
         self.actionOpen.setObjectName("actionOpen")
@@ -307,8 +303,11 @@ class Ui_MainWindow(QWidget):
 
         self.actionSave_As = QtWidgets.QAction(MainWindow)
         self.actionSave_As.setObjectName("actionSave_As")
+        self.actionSave_As.triggered.connect(self.file_save_as)
+
         self.actionAnalyze = QtWidgets.QAction(MainWindow)
         self.actionAnalyze.setObjectName("actionAnalyze")
+        self.actionAnalyze.triggered.connect(self.scan_input)
 
         self.actionExit = QtWidgets.QAction(MainWindow)
         self.actionExit.setObjectName("actionExit")
@@ -321,9 +320,6 @@ class Ui_MainWindow(QWidget):
         self.menuArchivo.addAction(self.actionAnalyze)
         self.menuArchivo.addAction(self.actionExit)
         self.menubar.addAction(self.menuArchivo.menuAction())
-        self.menubar.addAction(self.menuEdit.menuAction())
-        self.menubar.addAction(self.menuTools.menuAction())
-        self.menubar.addAction(self.menuScan.menuAction())
         self.menubar.addAction(self.menuReports.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
@@ -367,7 +363,6 @@ class Ui_MainWindow(QWidget):
             new_scanner = js_scanner()
             new_scanner.scan(data)
             token_list = new_scanner.token_list
-
             if len(new_scanner.error_list):
                 for error in new_scanner.error_list:
                     self.plainTextEdit.appendPlainText('>> ' + error.get_message())
@@ -414,7 +409,7 @@ class Ui_MainWindow(QWidget):
                     self.plainTextEdit.appendPlainText('>> JavaScript File')
                     # New scanner to analyze input
                     new_scanner = js_scanner()
-                    #new_scanner.scan(str)
+                   # new_scanner.scan(str)
                     x = str.splitlines()
                     for line in x:
                         y = line.rsplit(' ')
@@ -471,10 +466,48 @@ class Ui_MainWindow(QWidget):
                         self.generate_html(new_scanner.token_list)
                     self.plainTextEdit_2.insertPlainText(str)
                     f.close()
+            elif file_name[0].endswith('.rmt'):
+                with open(file_name[0], 'r') as f:
+                    data = f.read()
+                    self.plainTextEdit_2.clear()
+                    self.plainTextEdit.clear()
+                    self.plainTextEdit.appendPlainText('>> RMT File')
+                    new_scanner = js_scanner()
+                    self.plainTextEdit_2.insertPlainText(data)
+                    print(data)
+                    data = data.splitlines()
+                    for line in data:
+                        new_scanner = js_scanner()
+                        new_scanner.scan(line)
+                        new_scanner.token_list.append(js_token('LAST', '', 0, 0))
+                        token_list = new_scanner.token_list
+                        new_parser = js_parser()
+                        new_parser.parse(token_list)
+                        if len(new_parser.error_list):
+                            for error in new_parser.error_list:
+                                new_error = Error(line, 'Inválido')
+                                self.parser_errors.append(new_error)
+                                self.plainTextEdit.appendPlainText('>> Se esperaba ' + error.get_error())
+                        else:
+                            new_error = Error(line, 'Válido')
+                            self.parser_errors.append(new_error)
+                            self.plainTextEdit.appendPlainText('>> Entrada correcta')
+                    if len(self.parser_errors):
+                        self.parser_html()
+                    f.close()
             else:
                 print('File extension is not correct')
                 self.openSecondDialog()
                 pass
+
+    def file_save_as(self):
+        name = QFileDialog.getSaveFileName(self, 'Save File')
+        print(name)
+        file = open(name[0], 'w')
+        text = self.plainTextEdit_2.toPlainText()
+        file.write(text)
+        file.close()
+
     def generate_file(self, data, route, type):
         try:
             # Create target Directory
@@ -652,9 +685,6 @@ class Ui_MainWindow(QWidget):
         self.pushButton.setText(_translate("MainWindow", "Scan"))
         self.label.setText(_translate("MainWindow", "ML WEB"))
         self.menuArchivo.setTitle(_translate("MainWindow", "File"))
-        self.menuEdit.setTitle(_translate("MainWindow", "Edit"))
-        self.menuTools.setTitle(_translate("MainWindow", "Tools"))
-        self.menuScan.setTitle(_translate("MainWindow", "Scan"))
         self.menuReports.setTitle(_translate("MainWindow", "Reports"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.actionNew.setText(_translate("MainWindow", "New"))
