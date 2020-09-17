@@ -34,11 +34,11 @@ class Scanner:
         self. column = 0
         self.reserved = ['color', 'border', 'background-color', 'Opacity', 'font-family', ' font-size', 'padding-right',
                          'padding width', 'margin-right', 'margin position', 'right', 'clear', 'max-height',
-                         'background-image', 'url', 'width'
+                         'background-image', 'url', 'width', 'sease-out', 'pointer-events', 'landing'
                          'background', 'font-style', 'font', 'padding-bottom', 'display', 'height', 'margin-bottom',
-                         'border-style',
+                         'border-style', 'flex-direction', 'clip-path', 'circle', 'webkit-clip-path', 'transition'
                          'bottom', 'left', 'max-width', 'min-height', 'text-align', 'font-weight', 'padding-left',
-                         'padding-top', 'font-size', 'sans-serif', 'img'
+                         'padding-top', 'font-size', 'sans-serif', 'img', 'z-index', 'fixed', 'position', 'width'
                          'line-height', 'margin-top', 'margin-left', 'display', 'top', 'float', 'min-width', 'content',
                          'rgba', 'px', 'em', 'vh', 'vw', 'in', 'cm', 'mm', 'pt', 'pc', 'rem']
 
@@ -145,7 +145,10 @@ class Scanner:
                         self.set_token('LESS_THAN', char)
                         new_transition = Transition('Entrada ' + char + ' aceptada', 0)
                         self.transitions_list.append(new_transition)
-
+                    elif char == ',':
+                        self.set_token('COMMA', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                     else:
                         self.set_error(char, self.row)
                         new_transition = Transition('***** ERROR ' + char + ' *****', 0)

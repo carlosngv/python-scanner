@@ -1,0 +1,33 @@
+<!--PATHL: /Users/carlosngv/documents/output/html/ -->
+
+<html lang="en">
+<head>
+    <title>Document</title>
+</head>
+<body>
+    <th>adios</th>
+    <thead>dasd</thead>
+    <tr>hola</tr>
+    <td>hola</td>
+    <h1>hola</h1>
+    <tbody>fasdf</tbody>
+    <tfoot>asdfd</tfoot>
+    <a href="/hola/carlos.png">fsafsdv</a>
+    <table border="color: black">
+
+        <col src="asds"> </col>
+        <colgroup style="color:blue">avsddsv</colgroup>
+        <caption></caption>
+        <p>hola</p>
+        <a>dasdas</a>
+        <img src="https://images.unsplash.com/photo-1535378917 042-10a22c95931a">
+    </table>
+    <br>
+    <br>
+
+    <ul>
+<li>Elemento 1</li> <li>Elemento 2</li> <li>Elemento 3</li> <li>Elemento 4</li>
+</ul>
+
+</body>
+</html>

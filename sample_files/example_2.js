@@ -8,8 +8,10 @@ comentario
 class OBJECT {
 	var int = 1
 	var string = "42343 sgre"
+	var hola_mundo = "fdsgfv"
 	var char = 'a fasdf safd'
 	var boolean = true
+	var decimal = 34.43
 	var x = y
 	x *= 5
 	var edad = 18;

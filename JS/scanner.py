@@ -38,7 +38,8 @@ class Scanner:
             'break', 'true', 'false', 'value', 'new', 'Object', 'push', 'Array', 'appendChild', 'setAttribute',
             'innerHTML', 'innerText', 'element', 'createElement', 'JSON', 'Items', 'stringify', 'clear', 'fromHTML', 'forEach',
             'location', 'href', 'sessionStorage', 'getItem', 'null', 'this', 'Math', 'pow', 'class', 'save', 'ajax', 'parseInt',
-            'instanceof', 'default', 'break', 'debugger', 'in', 'void','typeof','try','switch', 'throw', 'catch', 'finally'
+            'instanceof', 'default', 'break', 'debugger', 'in', 'void','typeof','try','switch', 'throw', 'catch', 'finally',
+            'querySelector','querySelectorAll', 'addEventListener', 'toggle'
         ]
         self.aux = ''
         self.state = 0
@@ -112,6 +113,8 @@ class Scanner:
                             self.set_transition('Letter', 5, 0, 'no')
                         self.aux += char
                         self.state = 5
+                    elif char == '!':
+                        self.set_error('EXCL_SIGN', char)
                     elif char == '(':
                         self.set_token('LEFT_PARENT', char)
                     elif char == ')':
@@ -217,8 +220,14 @@ class Scanner:
                     self.aux += char
                     self.state = 4
                 elif self.state == 5:
-                    if not char.isalpha():
-
+                    if char == '_':
+                        self.state = 5
+                        self.aux += char
+                    elif not char.isalpha():
+                        if char == '_':
+                            self.aux += char
+                            self.state = 5
+                            continue
                         self.set_token(self.reservedToken(self.aux), self.aux)
                         if char == ')':
                             self.set_token('RIGHT_PARENT', char)
@@ -360,6 +369,10 @@ class Scanner:
                         self.set_token("LESS_THAN", self.aux )
                 elif self.state == 11:
                     if not char.isdigit():
+                        if char == '.':
+                            self.aux += char
+                            self.state = 11
+                            continue
                         self.set_token("NUMBER", self.aux)
                         if char == ')':
                             self.set_token('RIGHT_PARENT', char)

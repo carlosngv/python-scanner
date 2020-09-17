@@ -294,7 +294,7 @@ class Ui_MainWindow(QWidget):
         MainWindow.setStatusBar(self.statusbar)
         self.actionNew = QtWidgets.QAction(MainWindow)
         self.actionNew.setObjectName("actionNew")
-        self.actionNew.triggered.connect(lambda: self.plainTextEdit_2.clear())
+        self.actionNew.triggered.connect(self.clear_screen)
 
         self.actionOpen = QtWidgets.QAction(MainWindow)
         self.actionOpen.setObjectName("actionOpen")
@@ -324,10 +324,15 @@ class Ui_MainWindow(QWidget):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.parser_errors = []
+        self.js_num = 1
+        self.css_num = 1
+        self.html_num = 1
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
+    def clear_screen(self):
+        self.plainTextEdit.clear()
+        self.plainTextEdit_2.clear()
     def scan_input(self):
         data = str(self.plainTextEdit_2.toPlainText())
         console = str(self.plainTextEdit.toPlainText())
@@ -502,13 +507,15 @@ class Ui_MainWindow(QWidget):
 
     def file_save_as(self):
         name = QFileDialog.getSaveFileName(self, 'Save File')
-        print(name)
         file = open(name[0], 'w')
         text = self.plainTextEdit_2.toPlainText()
         file.write(text)
         file.close()
 
     def generate_file(self, data, route, type):
+        if route == '':
+            print("No route specified.")
+            return
         try:
             # Create target Directory
             os.makedirs(route)
@@ -517,11 +524,14 @@ class Ui_MainWindow(QWidget):
             print("Directory ", route, " already exists")
         f = ''
         if type == 'js':
-            f  = open(route + 'corregido.js', 'x')
+            f  = open(route + 'corregido'+ str(self.js_num) +'.js', 'x')
+            self.js_num += 1
         elif type == 'css':
-            f = open(route + 'corregido.css', 'x')
+            f  = open(route + 'corregido'+ str(self.css_num) +'.css', 'x')
+            self.css_num += 1
         elif type == 'html':
-            f = open(route + 'corregido.html', 'x')
+            f  = open(route + 'corregido'+ str(self.html_num) +'.html', 'x')
+            self.html_num += 1
         for line in data:
             f.write(line)
         f.close()
