@@ -194,7 +194,7 @@ class Ui_MainWindow(QWidget):
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.scan_input)
-
+        self.pushButton.setStyleSheet("color: black;")
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(380, 70, 311, 291))
         self.scrollArea.setWidgetResizable(True)
@@ -255,11 +255,12 @@ class Ui_MainWindow(QWidget):
         self.label.setGeometry(QtCore.QRect(270, 10, 161, 51))
 
         self.combobox = QtWidgets.QComboBox(self.centralwidget)
+        self.combobox.setGeometry(QtCore.QRect(525, 15, 150, 40))
+        self.combobox.setStyleSheet("color: black;")
         self.combobox.addItem("JAVASCRIPT")
         self.combobox.addItem("CSS")
         self.combobox.addItem("HTML")
         self.combobox.addItem("PARSER JS")
-        self.combobox.setGeometry(QtCore.QRect(525, 15, 161, 51))
 
 
 

@@ -149,6 +149,10 @@ class Scanner:
                         self.set_token('COMMA', char)
                         new_transition = Transition('Entrada ' + char + ' aceptada', 0)
                         self.transitions_list.append(new_transition)
+                    elif char == '@':
+                        self.set_token('ARROBA', char)
+                        new_transition = Transition('Entrada ' + char + ' aceptada', 0)
+                        self.transitions_list.append(new_transition)
                     else:
                         self.set_error(char, self.row)
                         new_transition = Transition('***** ERROR ' + char + ' *****', 0)

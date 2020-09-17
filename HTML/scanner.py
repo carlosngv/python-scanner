@@ -25,7 +25,7 @@ class Scanner:
             'HTML', 'html', 'form', 'method', 'METHOD', 'p', 'DOCUMENT', 'DOCTYPE', 'meta', 'title', 'script','body'
             , 'head', 'td', 'ul', 'th', 'tr', 'table', 'label', 'input','br', 'type', 'id', 'action', 'onsubmit', 'h1',
             'h2', 'h3', 'h4','h5','h6', 'colgroup', 'img', 'li','caption', 'col', 'thead', 'tbody', 'tfoot', 'footer',
-            'lang', 'src', 'a','!DOCTYPE'
+            'lang', 'src', 'a','!DOCTYPE', 'charset', 'img'
 
         ]
 
@@ -35,7 +35,7 @@ class Scanner:
         data = list(data)
         for line in input:
             lineAux = line
-            if re.findall('<!DOCTYPE HTML>', line):
+            if re.match('<!DOCTYPE HTML>', line):
                 self.set_token('LESS_THAN','<')
                 self.set_token('RESERVED_!DOCTYPE','!DOCTYPE')
                 self.set_token('RESERVED_HTML','HTML')
@@ -48,16 +48,13 @@ class Scanner:
                 lineAux = lineAux.replace('-->', '')
                 lineAux = lineAux.replace('PATHL:', '')
                 self.route = lineAux
-                continue
+
+
             line = list(line)
             for char in line:
-               # print(char)
                 if self.state == 0:
-                    if char == '<':
-                        self.aux += char
-                        #self.set_token('LESS_THAN', char)
-                        self.state = 58
-                    elif char == '>':
+
+                    if char == '>':
                         self.set_token('GREATER_THAN', char)
                         self.state = 57
                     elif char == '=':
@@ -66,8 +63,14 @@ class Scanner:
                     elif char == '/':
                         self.set_token('SLASH', char)
                         self.state = 0
+                    elif char == '-':
+                        self.set_token('HYPHEN', char)
                     elif char == '!':
-                        self.state = 64
+                        self.set_token('EXCL_SYMB', char)
+                        self.state = 0
+                    elif char == '<':
+                        self.aux += char
+                        self.state = 1
                     elif char.isalpha():
                         self.aux += char
                         self.state = 62
@@ -82,9 +85,38 @@ class Scanner:
                         pass
                     else:
                         self.set_error(char, self.row)
-
-
-                # STRING
+                # Comment
+                elif self.state == 1:
+                    if char == '!':
+                        self.aux += char
+                        self.state = 2
+                    else:
+                        self.set_token('LESS_THAN', self.aux)
+                        if char.isalpha():
+                            self.aux += char
+                            self.state = 62
+                elif self.state == 2:
+                    if char == '-':
+                        self.aux += char
+                        self.state = 3
+                    else:
+                        self.set_token('ID', self.aux)
+                elif self.state == 3:
+                    if char == '-':
+                        self.aux += char
+                        self.state = 4
+                    else:
+                        self.set_token('ID', self.aux)
+                elif self.state == 4:
+                    if char == '>':
+                        self.aux += char
+                        print(self.aux)
+                        self.aux = self.aux.replace('<','')
+                        self.set_token('COMMENT', self.aux)
+                    else:
+                        self.aux += char
+                        self.state = 4
+                        # STRING
                 elif self.state == 44:
                     if char != '"':
                         self.aux += char
@@ -105,37 +137,7 @@ class Scanner:
                         if not re.match('(^$| +)', self.aux):
                             self.set_token('TEXT', self.aux)
                         self.set_token('LESS_THAN', char)
-                elif self.state == 58:
-                    if char == '!':
-                        self.aux += char
-                        self.state = 59
-                    else:
-                        self.set_token('LESS_THAN', self.aux)
-                        if char.isalpha():
-                            self.aux += char
-                            self.state = 62
-                elif self.state == 59:
-                    if char == '-':
-                        self.aux += char
-                        self.state = 60
-                    elif self.aux == '!DOCTYPE':
-                        self.set_token('RESERVED_!DOCTYPE', self.aux)
-                        continue
-                    elif char.isalpha():
-                        self.aux += char
-                        self.state  = 59
-                elif self.state == 60:
-                    if char == '-':
-                        self.aux += char
-                        self.state = 61
-                elif self.state == 61:
-                    if not char == '>':
-                        self.aux += char
-                        self.state = 61
-                    else:
-                        self.aux += char
-                        self.set_token('COMMENT', self.aux)
-
+                        self.state = 1
                 elif self.state == 62:
                     if char.isdigit():
                         self.aux += char
@@ -157,20 +159,6 @@ class Scanner:
                     else:
                         self.aux += char
                         self.state = 63
-                elif self.state == 64:
-                    if char.isalpha():
-                        self.aux += char
-                        self.state = 65
-                    else:
-                        self.set_token('EXCLAMATION_SIGN', self.aux)
-                elif self.state == 65:
-                    if char.isalpha():
-                        self.aux += char
-                        if self.aux == '!DOCTYPE':
-                            self.set_token('RESERVED_!DOCTYPE', self.aux )
-                            continue
-                        self.state = 65
-
             self.row += 1
             self.column = 0
 
@@ -181,14 +169,13 @@ class Scanner:
         return 'ID'
 
     def set_token(self, token_type, value):
+        if len(value) == 0:
+            return
         self.column += 1
         self.state = 0
         self.aux = ''
         new_token = Token(token_type,value,self.row ,self.column)
-        if new_token not in self.token_list:
-            self.token_list.append(new_token)
-        else:
-            print('Token is already in.')
+        self.token_list.append(new_token)
 
     def set_error(self, value,row):
         self.dataAux = self.dataAux.replace(value, '')

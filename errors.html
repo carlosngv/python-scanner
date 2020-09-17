@@ -6,20 +6,21 @@
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
                         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css" integrity="sha384-qF/QmIAj5ZaYFAeQcrQ6bfVMAh4zZlrGwTPY7T/M+iTTLJqJBJjwwnsE5Y0mV7QK" crossorigin="anonymous">
                         <link rel="stylesheet" href="styles/main.css">
-                        <title>Tabla de Errores</title>
+                        <title>Reporte Parser</title>
                     </head>
                     <body>
                         <div class="container">
-                        <h1>Tabla de Errores</h1>
+                        <h1>Reporte Parser</h1>
                         <table class="table table-striped">
                           <thead class="thead-dark">
                             <tr>
                               <th scope="col">Num.</th>
-                              <th scope="col">Error</th>
+                            <th scope="col">Valor</th>
+                              <th scope="col">Análisis</th>
                             </tr>
                           </thead>
                           <tbody>
-                          <tr><td>1</td><td>La entrada "^" en la fila 47 no pertenece al lenguaje.</td></tr><tr><td>2</td><td>La entrada "^" en la fila 78 no pertenece al lenguaje.</td></tr><tr><td>3</td><td>La entrada "`" en la fila 99 no pertenece al lenguaje.</td></tr><tr><td>4</td><td>La entrada "`" en la fila 99 no pertenece al lenguaje.</td></tr><tr><td>5</td><td>La entrada "~" en la fila 119 no pertenece al lenguaje.</td></tr><tr><td>6</td><td>La entrada "!" en la fila 134 no pertenece al lenguaje.</td></tr><tr><td>7</td><td>La entrada "%" en la fila 141 no pertenece al lenguaje.</td></tr><tr><td>8</td><td>La entrada "#" en la fila 149 no pertenece al lenguaje.</td></tr><tr><td>9</td><td>La entrada "@" en la fila 166 no pertenece al lenguaje.</td></tr><tr><td>10</td><td>La entrada "$" en la fila 175 no pertenece al lenguaje.</td></tr><tr><td>11</td><td>La entrada "¿" en la fila 180 no pertenece al lenguaje.</td></tr><tr><td>12</td><td>La entrada "@" en la fila 192 no pertenece al lenguaje.</td></tr>
+                          <tr><td>1</td><td>(2+3/3(3+69(5-6))*((2.3+8.5)+3*(535))</td><td>Inválido</td></tr><tr><td>2</td><td>(2+3/3(3+69(5-6))*((2.3+8.5)+3*(535))</td><td>Inválido</td></tr><tr><td>3</td><td>2+6-5*/52</td><td>Válido</td></tr><tr><td>4</td><td>2+3*5-6</td><td>Válido</td></tr><tr><td>5</td><td>(5.50+2+*(3+5(()</td><td>Inválido</td></tr><tr><td>6</td><td>(5.50+2+*(3+5(()</td><td>Inválido</td></tr><tr><td>7</td><td>(5.50+2+*(3+5(()</td><td>Inválido</td></tr><tr><td>8</td><td>(3+-5/5*63-5.30)</td><td>Válido</td></tr><tr><td>9</td><td>((4 - 6 *(1/8)/2)+(6-9*(2))-(5)*(3*x)/(var1))</td><td>Válido</td></tr><tr><td>10</td><td>(7/6*2)-(var1 * exp1/r)/(6-8))</td><td>Inválido</td></tr><tr><td>11</td><td>2*(3)+(2+5)-(2.5+3.8)-(1)-(0)</td><td>Válido</td></tr><tr><td>12</td><td>78-20353.0/85*((3+(2+6)))+3</td><td>Válido</td></tr>
                         </tbody>
                           </table>
                           </div>
